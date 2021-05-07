@@ -36,9 +36,9 @@ function mrPopUp(
     },
     // After % scroll
     get scrollPercent() {
-      if (typeof input === "number") return scrollPercentInput;
+      if (typeof scrollPercentInput === "number") return scrollPercentInput;
       console.log(
-        "Invalid scroll unit, it should be number, for 50%  . Default animation values will be used"
+        "Invalid scroll unit, it should be number, for 50% = 50 . Default animation values will be used"
       );
       return 60;
     },
