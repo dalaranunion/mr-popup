@@ -136,7 +136,7 @@ function mrPopUp(
   this.updateLocalStorage = function (cmd) {
     // get local storage, parse and store it in the object
     this.status.browserPopUps = JSON.parse(
-      localStorage.getItem(localStorageLabel)
+      localStorage.getItem(this.settings.localStorageLabel)
     );
     // Set variable outside of the try block
     let existingEntryIndex;
@@ -174,7 +174,7 @@ function mrPopUp(
     }
     // Update the local storage based on popup object
     localStorage.setItem(
-      localStorageLabel,
+      this.settings.localStorageLabel,
       JSON.stringify(this.status.browserPopUps)
     );
     // Return the current pop up status
