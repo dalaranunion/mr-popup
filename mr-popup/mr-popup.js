@@ -1,21 +1,52 @@
-function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
-  // Setup the Objects
+function mrPopUp(
+  popupNameInput,
+  timeOutInput,
+  scrollPercentInput,
+  animationSpeed
+) {
+  // Check if input is right unit: number (miliseconds) or string "12s" (seconds)
+  function timeUnitCheck(input) {
+    if (typeof input === "number") return input;
+    if (typeof input === "string") {
+      let timeFromStr = input.match(/\d+[sS]{1}/g);
+      if (timeFromStr)
+        return timeFromStr[0].toLocaleLowerCase().replace("s", "") * 1000;
+    }
+    console.log(
+      'Invalid animation time unit, it should be number or string: "5s" or 5000. Default animation values will be used'
+    );
+    return false;
+  }
+  //=== Setup the Objects ===
+  // Store the settings from params
   this.settings = {
+    localStorageLabel: "mrPopUp",
     get animationSpeed() {
-      if (typeof animationSpeed !== "number") return 400;
-      return animationSpeed;
+      const timeUnit = timeUnitCheck(animationSpeed);
+      // Time fallback
+      return timeUnit || 400;
     },
-    popupName: popupName,
-    // Timeout in Seconds
-    timeOut: timeOut,
-    // After % scroll
-    scrollPercent: scrollPercent,
-    get method() {
-      if (timeOut && scrollPercent) return "both";
-      if (timeOut) return "timeOnly";
-      if (scrollPercent) return "scrollOnly";
-    },
+    popupName: popupNameInput,
     popUp: "",
+    // Timeout in Seconds
+    get timeOut() {
+      const timeUnit = timeUnitCheck(timeOutInput);
+      // Timeout fallback
+      return timeUnit || 30000;
+    },
+    // After % scroll
+    get scrollPercent() {
+      if (typeof input === "number") return scrollPercentInput;
+      console.log(
+        "Invalid scroll unit, it should be number, for 50%  . Default animation values will be used"
+      );
+      return 60;
+    },
+    get method() {
+      if (timeOutInput && scrollPercentInput) return "both";
+      if (timeOutInput) return "timeOnly";
+      if (scrollPercentInput) return "scrollOnly";
+    },
   };
   this.status = {
     scrolled: false,
@@ -26,9 +57,9 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
     timerRunning: false,
   };
 
-  // IMPORTANT - Bind 'this' to a variable
+  //Bind 'this' to a variable
   const _this = this;
-  // Detect the scroll
+  // Detect if the scroll has passed
   this.waypointDetection = function () {
     if (_this.status.scrolling === true) return false;
     if (_this.status.scrolled === true) return true;
@@ -38,13 +69,13 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
     function isScrolling() {
       scrolling = true;
     }
-
     window.addEventListener("scroll", isScrolling);
 
     // Set interval to throttle scroll events
     const intervalScript = setInterval(() => {
       if (scrolling) {
         scrolling = false;
+        // Run the script
         scrolledPc = parseInt(
           ((scrollY + window.innerHeight) / (scrollMaxY + window.innerHeight)) *
             100
@@ -65,8 +96,6 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
   };
   // time out timer
   this.timeoutExpiredDetection = function () {
-    // Bind this to a variable
-    const _this = this;
     // If the timer is Running return
     if (_this.status.timerRunning === true) return false;
     // If the timer is expired then
@@ -78,7 +107,7 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
       _this.status.timerRunning = false; // The timer has stopped running
       console.log("Timer Expired");
       _this.method(); // Check the method
-    }, _this.settings.timeOut * 1000);
+    }, _this.settings.timeOut);
   };
   this.method = function () {
     switch (this.settings.method) {
@@ -106,7 +135,9 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
   // Takes input: True will update the local storage based on the browser, false updates from localstorage
   this.updateLocalStorage = function (cmd) {
     // get local storage, parse and store it in the object
-    this.status.browserPopUps = JSON.parse(localStorage.getItem("ibe_popup"));
+    this.status.browserPopUps = JSON.parse(
+      localStorage.getItem(localStorageLabel)
+    );
     // Set variable outside of the try block
     let existingEntryIndex;
     // Error check if the JSON return bad data; anything that is not an array
@@ -117,9 +148,9 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
       ) {
         return entry.popupName === _this.settings.popupName;
       });
-      console.log(_this.status.browserPopUps[existingEntryIndex]);
+      // console.log(_this.status.browserPopUps[existingEntryIndex]);
     } catch (error) {
-      // Ser this to -1 = not found
+      // Set to -1 = not found
       existingEntryIndex = -1;
       // Since it is not an array then re-set the object to an empty array
       this.status.browserPopUps = [];
@@ -136,7 +167,6 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
           existingEntryIndex
         ].dismissed = this.status.dismissed;
     } else {
-      console.log("we had ELSE");
       this.status.browserPopUps.push({
         popupName: this.settings.popupName,
         dismissed: this.status.dismissed,
@@ -144,17 +174,19 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
     }
     // Update the local storage based on popup object
     localStorage.setItem(
-      "ibe_popup",
+      localStorageLabel,
       JSON.stringify(this.status.browserPopUps)
     );
     // Return the current pop up status
     return this.status.dismissed;
   };
+  // This will show the popup
   this.showPopUp = function () {
     $(this.settings.popUp).slideDown(animationSpeed);
     this.status.dismissed = false;
     this.updateLocalStorage(true);
   };
+  // This will hide the popup
   this.closePopup = function () {
     $(this.settings.popUp).slideUp(animationSpeed);
     this.status.dismissed = true;
@@ -169,10 +201,11 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
     this.status.scrolled = false;
     this.updateLocalStorage(true);
   };
+  // Init
   this.initPopUp = function () {
     // If the popupname is not a string
     if (typeof this.settings.popupName !== "string")
-      return new Error("The name of the Pop up needs to be string only");
+      return new Error("The name of the Pop up needs a CSS Selector");
     this.settings.popUp = document.querySelector(this.settings.popupName);
     if (!this.settings.popUp)
       return new Error(
@@ -190,9 +223,3 @@ function _PopUp(popupName, timeOut, scrollPercent, animationSpeed) {
   };
   this.initPopUp();
 }
-
-var thePopUp = new ibe_PopUp(".pop-up-width", 10, 40);
-
-$(document).on("click", ".pop-up-close-btn", function () {
-  thePopUp.closePopup();
-});
