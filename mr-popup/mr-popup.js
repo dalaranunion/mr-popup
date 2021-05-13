@@ -72,12 +72,13 @@ function mrPopUp(
     window.addEventListener("scroll", isScrolling);
 
     // Set interval to throttle scroll events
-    const intervalScript = setInterval(() => {
+    const intervalScript = setInterval(function () {
       if (scrolling) {
         scrolling = false;
         // Run the script
         scrolledPc = parseInt(
-          ((scrollY + window.innerHeight) / (scrollMaxY + window.innerHeight)) *
+          ((scrollY + window.innerHeight) /
+            (document.body.scrollHeight + window.innerHeight)) *
             100
         );
         if (
@@ -159,13 +160,11 @@ function mrPopUp(
     // If there is an entry update popup object with status from storage
     if (existingEntryIndex >= 0) {
       if (cmd === false)
-        this.status.dismissed = this.status.browserPopUps[
-          existingEntryIndex
-        ].dismissed;
+        this.status.dismissed =
+          this.status.browserPopUps[existingEntryIndex].dismissed;
       if (cmd === true)
-        this.status.browserPopUps[
-          existingEntryIndex
-        ].dismissed = this.status.dismissed;
+        this.status.browserPopUps[existingEntryIndex].dismissed =
+          this.status.dismissed;
     } else {
       this.status.browserPopUps.push({
         popupName: this.settings.popupName,
