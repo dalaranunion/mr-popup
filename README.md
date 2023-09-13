@@ -18,11 +18,11 @@ var thePopUp = new mrPopUp({
 | Param                  |      Type       | Required | Default | Description                                                                                                              |
 | ---------------------- | :-------------: | :------: | ------- | ------------------------------------------------------------------------------------------------------------------------ |
 | name                   |     String      |    ✅    |         | The identifier of the pop-up                                                                                             |
-| content                |     Element     |    ✅    |         | An javascript or jQuery element                                                                                          |
-| settings.timeout       | Number / String |          | 0       | Number in ms or string "1s" Show pop up in X miliseconds                                                                 |
+| content                |     Element     |    ✅    |         | Javascript or jQuery element                                                                                          |
+| settings.timeout       | Number / String |          | 0       | Number in ms or string "1s" to show pop up in X miliseconds                                                                 |
 | settings.scrollPercent |     Number      |          | 0       | Show pop up when X percentage of page is scrolled                                                                        |
-| settings.fullScreen    |     Boolean     |          | true    | Be a modal true / false a small popup in the page                                                                        |
-| settings.session       |     Boolean     |          | true    | Store pop-up status when dismissed to true: per session or False: per browser storage                                    |
+| settings.fullScreen    |     Boolean     |          | true    | Be a modal true or false a small popup in the page                                                                        |
+| settings.session       |     Boolean     |          | true    | Store pop-up status when dismissed to per session true or False per br owser storage                                    |
 | settings.speed         | Number / String |          | 200     | Animation speed of the pop-up                                                                                            |
 | settings.closeBtnColor |     String      |          | 000000  | Hex value (without #) for the close (X) icon colour                                                                      |
 | settings.callToAction  |     String      |          | false   | Class name used for CTA buttons. Clicking these will mark the pop-up as closed since the call to action has been clicked |
