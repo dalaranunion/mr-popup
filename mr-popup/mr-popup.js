@@ -45,7 +45,8 @@ function MrPopUp(obj) {
     if (typeof input === "number" && input >= 0) return input;
     if (typeof input === "string") {
       let timeFromStr = input.match(/[0-9]+%*/g);
-      if (timeFromStr) return parseInt(timeFromStr[0].toLocaleLowerCase().replace("%", ""));
+      if (timeFromStr)
+        return parseInt(timeFromStr[0].toLocaleLowerCase().replace("%", ""));
     }
     return false;
   }
@@ -74,7 +75,9 @@ function MrPopUp(obj) {
   if (
     (obj.content === undefined && !obj.hasOwnProperty("content")) ||
     (!(obj.content instanceof jQuery) &&
-      (!obj.content || obj.content.nodeType === undefined || obj.content.nodeType !== 1)) ||
+      (!obj.content ||
+        obj.content.nodeType === undefined ||
+        obj.content.nodeType !== 1)) ||
     (obj.content instanceof jQuery && obj.content[0] === undefined)
   )
     throw Error(
@@ -85,7 +88,7 @@ function MrPopUp(obj) {
   const settings = obj.hasOwnProperty("settings") ? obj.settings : {};
   // if a setting is missing default value will be assigned
   if (Object.keys(settings).length === 0) console.log("No settings given using defaults");
-  if (!settings.hasOwnProperty("timeout")) settings.timeout = 0;
+  if (!settings.hasOwnProperty("timeout")) settings.timeout = 100;
   if (!settings.hasOwnProperty("scrollPercent")) settings.scrollPercent = 0;
   if (!settings.hasOwnProperty("fullScreen")) settings.fullScreen = true;
   if (!settings.hasOwnProperty("session")) settings.session = true;
@@ -149,7 +152,7 @@ function MrPopUp(obj) {
     },
     timerRunning: false,
   };
-  let scrolled = false;
+  let scrolled = settings.scrollPercent === 0 ? true : false;
   let timeExpired = false;
 
   function browserStorage(input) {
@@ -314,7 +317,8 @@ function MrPopUp(obj) {
       var KEYCODE_TAB_2 = 9;
 
       element.addEventListener("keydown", function (e) {
-        var isTabPressed = e.key === "Tab" || e.keyCode === KEYCODE_TAB_1 || KEYCODE_TAB_2;
+        var isTabPressed =
+          e.key === "Tab" || e.keyCode === KEYCODE_TAB_1 || KEYCODE_TAB_2;
 
         if (!isTabPressed) {
           return;
@@ -430,7 +434,8 @@ function MrPopUp(obj) {
   // ========== Reset Pop up status =========
   // ========================================
   this.reset = function () {
-    if (this.status.timerRunning || this.status.scrolling) return "Things are still running";
+    if (this.status.timerRunning || this.status.scrolling)
+      return "Things are still running";
     this.status.dismissed = false;
     scrolled = false;
     timeExpired = false;
